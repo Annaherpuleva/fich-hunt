@@ -377,6 +377,30 @@ const StartGamePage: React.FC = () => {
       );
       if (!_sig) return;
 
+      const authToken =
+        typeof window !== 'undefined'
+          ? window.localStorage.getItem('authToken') || window.localStorage.getItem('accessToken')
+          : null;
+
+      const createRes = await fetchCompat(base, '/api/v1/fish/create', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+        },
+        body: JSON.stringify({
+          name: fishName.trim(),
+          depositUnits: String(depositLamports),
+        }),
+      });
+
+      if (!createRes.ok) {
+        const payload = await createRes.json().catch(() => null);
+        const apiError = payload?.error || payload?.message;
+        throw new Error(String(apiError || `Create fish request failed (${createRes.status})`));
+      }
+
       const walletAddress = publicKey.toBase58();
       const waitForCreatedFish = async (totalMs = 35000, intervalMs = 1200) => {
         const started = Date.now();
@@ -387,7 +411,11 @@ const StartGamePage: React.FC = () => {
               ? myFish.data.items
               : Array.isArray(myFish?.items)
                 ? myFish.items
-                : [];
+                : Array.isArray(myFish?.data)
+                  ? myFish.data
+                  : Array.isArray(myFish)
+                    ? myFish
+                    : [];
             const created = items.find((it) => String(it?.fishName || '').toLowerCase() === fishName.toLowerCase());
             if (created) {
               return {
