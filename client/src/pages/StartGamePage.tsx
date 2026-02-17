@@ -821,6 +821,12 @@ const StartGamePage: React.FC = () => {
                   </div>
                 ))}
 
+                {activeTab === 'new' && !loadingRecent && recentItems.length === 0 && (
+                  <div className="text-sm lg:text-base font-bold leading-[1.2] text-[#DEDEDE]">
+                    {t.noFishYet}
+                  </div>
+                )}
+
                 {activeTab === 'top' && !loadingTop && topItems.slice(0, 10).map((player, _idx) => (
                   <div key={`top-${player.id}`} className="flex items-center gap-3 lg:gap-4 w-full min-h-[50px] lg:h-[60px]">
                     <div
@@ -857,6 +863,12 @@ const StartGamePage: React.FC = () => {
                     </div>
                   </div>
                 ))}
+
+                {activeTab === 'top' && !loadingTop && topItems.length === 0 && (
+                  <div className="text-sm lg:text-base font-bold leading-[1.2] text-[#DEDEDE]">
+                    {t.noFishYet}
+                  </div>
+                )}
               </div>
             </div>
           </div>
