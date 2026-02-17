@@ -6,9 +6,14 @@ export type EventCommentInput = {
 }
 
 export function buildEventComment(input: EventCommentInput): string {
-  switch (input.eventType) {
+  const normalizedType = String(input.eventType || "")
+    .trim()
+    .replace(/([a-z0-9])([A-Z])/g, "$1_$2")
+    .toLowerCase()
+
+  switch (normalizedType) {
     case "fish_created":
-      return `create fich: user #${input.actorUserId ?? "unknown"} created fish #${input.fishId ?? "unknown"}`
+      return `create fish: user #${input.actorUserId ?? "unknown"} created fish #${input.fishId ?? "unknown"}`
     case "fish_fed":
       return `feed: user #${input.actorUserId ?? "unknown"} fed fish #${input.fishId ?? "unknown"}`
     case "hunting_mark_placed":
