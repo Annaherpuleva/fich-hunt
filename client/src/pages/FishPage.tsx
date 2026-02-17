@@ -19,7 +19,7 @@ import { useWallet } from '../wallet/tonWallet';
 import { useTx } from '../components/TxOverlay';
 import * as anchor from '@/shims/anchor';
 import { PublicKey, SystemProgram } from '@/shims/solanaWeb3';
-import { getProgram } from '../config/contract';
+import { getOceanService } from '../config/runtimeGame';
 import { useLanguage } from '../contexts/LanguageContext';
 import { solToLamports } from '../core/utils/format';
 import { LAMPORTS_PER_SOL, MIN_FEED_LAMPORTS } from '../core/constants';
@@ -795,7 +795,7 @@ const FishPage: React.FC = () => {
       const name = reviveName.trim();
       if (!publicKey) throw new Error('Wallet not connected');
 
-      const readProgram: any = await getProgram(undefined, {} as any);
+      const readProgram: any = await getOceanService(undefined, {} as any);
       const programId: PublicKey = readProgram.programId as PublicKey;
 
       const [oceanPda] = PublicKey.findProgramAddressSync([Buffer.from('ocean')], programId);

@@ -14,7 +14,7 @@ import SkeletonFishCard from '../features/fish/components/SkeletonFishCard';
 import { useWallet } from '../wallet/tonWallet';
 import { PublicKey, SystemProgram } from '@/shims/solanaWeb3';
 import * as anchor from '@/shims/anchor';
-import { getProgram } from '../config/contract';
+import { getOceanService } from '../config/runtimeGame';
 import { useTx } from '../components/TxOverlay';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Buffer } from 'buffer';
@@ -79,7 +79,7 @@ const MyFishPage: React.FC = () => {
       const feedingAmount = baseAmount + SAFETY_DELTA_LAMPORTS;
 
       // Для read-only операций
-      const readProgram: any = await getProgram(undefined, {} as any);
+      const readProgram: any = await getOceanService(undefined, {} as any);
       const programId: PublicKey = readProgram.programId as PublicKey;
 
       const fishPda = (() => {
@@ -277,7 +277,7 @@ const MyFishPage: React.FC = () => {
 
       if (!publicKey) throw new Error('Wallet not connected');
       
-      const readProgram: any = await getProgram(undefined, {} as any);
+      const readProgram: any = await getOceanService(undefined, {} as any);
       const programId: PublicKey = readProgram.programId as PublicKey;
 
       const [oceanPda] = PublicKey.findProgramAddressSync([Buffer.from('ocean')], programId);
