@@ -3,7 +3,13 @@ import { fetchCompat } from './compat';
 
 async function getJsonCompat(path: string) {
   const base = getApiBaseUrlSync();
-  const res = await fetchCompat(base, path, { credentials: 'include' });
+  const token = typeof window !== 'undefined'
+    ? (window.localStorage.getItem('authToken') || window.localStorage.getItem('accessToken'))
+    : null;
+  const res = await fetchCompat(base, path, {
+    credentials: 'include',
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
   if (!res.ok) {
     throw new Error(`Request failed with ${res.status}`);
   }
