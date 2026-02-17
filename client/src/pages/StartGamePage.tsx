@@ -334,7 +334,7 @@ const StartGamePage: React.FC = () => {
       }
       return;
     }
-    // Минимальный депозит 0.01 TON согласно контракту (10_000_000 лампортов)
+    // Минимальный депозит 0.01 TON по правилам сервиса (10_000_000 базовых единиц)
     if (fishPrice < 0.01) {
       alert(language === 'ru' ? 'Минимальный депозит 0.01 TON' : 'Minimum deposit is 0.01 TON');
       return;
@@ -363,7 +363,7 @@ const StartGamePage: React.FC = () => {
       const depositLamports = Math.floor(fishPrice * LAMPORTS_PER_SOL);
       const oceanAddress = String((await loadRuntimeConfig()).OCEAN_TON || '').trim();
       if (!oceanAddress) {
-        throw new Error(language === 'ru' ? 'Не настроен адрес контракта OCEAN_TON.' : 'OCEAN_TON contract address is not configured.');
+        throw new Error(language === 'ru' ? 'Не настроен адрес сервиса OCEAN_TON.' : 'OCEAN_TON service address is not configured.');
       }
 
       const _sig = await runTx(
@@ -409,7 +409,7 @@ const StartGamePage: React.FC = () => {
         ? Number(createdFish?.valueLamports)
         : depositLamports;
 
-      // After successful on-chain creation, wait for backend to bind avatar
+      // After successful creation request, wait for backend to bind avatar
       setCreatedValueSol(valueLamports / LAMPORTS_PER_SOL);
       if (fishNameOnChain) setFishName(fishNameOnChain);
       setWaitingAvatar(true);

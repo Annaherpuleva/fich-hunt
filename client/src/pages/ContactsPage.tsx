@@ -46,7 +46,7 @@ const contactsTranslation: Record<Language, ContactsTranslations> = {
 
     supportTitle: '🛠 Техническая поддержка',
     supportIntro:
-      'Если вы столкнулись с ошибкой, некорректной работой интерфейса или смарт-контракта, пожалуйста, опишите проблему максимально подробно и укажите:',
+      'Если вы столкнулись с ошибкой или некорректной работой интерфейса/серверной логики, пожалуйста, опишите проблему максимально подробно и укажите:',
     supportDetailsIntro: 'Пожалуйста, укажите в обращении:',
     supportDetailsList: ['ваш кошелёк', 'время возникновения проблемы', 'что именно пошло не так'],
     supportDetailsNote: 'Это сильно ускорит решение.',
@@ -74,7 +74,7 @@ const contactsTranslation: Record<Language, ContactsTranslations> = {
 
     supportTitle: '🛠 Technical support',
     supportIntro:
-      'If you encounter a bug, interface issue or suspect incorrect smart‑contract behaviour, please describe the problem in as much detail as possible and include:',
+      'If you encounter a bug, interface issue, or suspect incorrect server-side behaviour, please describe the problem in as much detail as possible and include:',
     supportDetailsIntro: 'Please include in your message:',
     supportDetailsList: ['your wallet address', 'approximate time when the issue occurred', 'what exactly went wrong'],
     supportDetailsNote: 'This will help us resolve the issue much faster.',
