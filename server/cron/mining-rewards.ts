@@ -1,8 +1,36 @@
 import type { Express } from "express"
 import { and, eq, gt, lte, sql } from "drizzle-orm"
+import { integer, numeric, pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core"
 
-import { db } from "../db"
-import { bonusTransactions, MINING_CONSTANTS, userMiners, users } from "../../shared/schema"
+import { db, hasTables } from "../db"
+import { MINING_CONSTANTS } from "../../shared/constants"
+
+const userMiners = pgTable("user_miners", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  price: numeric("price", { precision: 18, scale: 2 }).notNull(),
+  dailyRate: numeric("daily_rate", { precision: 6, scale: 4 }).notNull(),
+  purchasedAt: timestamp("purchased_at").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  lastAccruedAt: timestamp("last_accrued_at").notNull(),
+  totalProfit: numeric("total_profit", { precision: 18, scale: 6 }).notNull(),
+})
+
+const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  usdtBalance: numeric("usdt_balance", { precision: 18, scale: 6 }).notNull(),
+  internalBalance: numeric("internal_balance", { precision: 18, scale: 6 }).notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+})
+
+const bonusTransactions = pgTable("bonus_transactions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  type: varchar("type", { length: 64 }).notNull(),
+  amount: numeric("amount", { precision: 18, scale: 6 }).notNull(),
+  metadata: varchar("metadata", { length: 255 }),
+  createdAt: timestamp("created_at").notNull(),
+})
 
 const ACCRUAL_INTERVAL_MS = MINING_CONSTANTS.ACCRUAL_MINUTES * 60 * 1000
 
@@ -16,6 +44,12 @@ type AccrualResult = {
 }
 
 async function accrueMinerRewards(): Promise<AccrualResult> {
+  const requiredTablesExist = await hasTables("user_miners", "users", "bonus_transactions")
+  if (!requiredTablesExist) {
+    console.warn("Skipping mining reward accrual: required tables are not available yet")
+    return { hasActiveMiners: false }
+  }
+
   const now = new Date()
   const pendingMiners = await db
     .select()
