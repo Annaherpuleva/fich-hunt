@@ -21,16 +21,22 @@ function normalizePath(path: string): string {
   return path.startsWith('/') ? path : `/${path}`;
 }
 
-function withOrWithoutApiPrefix(path: string): string[] {
+function withOrWithoutApiPrefix(path: string, includeNonApiVariant: boolean): string[] {
   const normalized = normalizePath(path);
   if (normalized.startsWith('/api/')) {
-    const withoutApi = normalized.replace(/^\/api/, '') || '/';
-    // Some deployments expose only /api/* routes while others expose /v1/*.
-    // Probe both variants to avoid hard failures on either setup.
-    return [withoutApi, normalized];
+    const variants = [normalized];
+    if (normalized.startsWith(V1_PREFIX)) {
+      variants.push(normalized.replace(/^\/api\/v1/, '/api'));
+      variants.push(normalized.replace(/^\/api\/v1/, '/v1'));
+    }
+    if (includeNonApiVariant) {
+      // Some deployments expose only root-level legacy routes.
+      variants.push(normalized.replace(/^\/api/, '') || '/');
+    }
+    return variants;
   }
   // Prefer /v1/* style routes and only then try /api/* compatibility fallback.
-  return [normalized, `/api${normalized}`];
+  return includeNonApiVariant ? [normalized, `/api${normalized}`] : [`/api${normalized}`];
 }
 
 function isHtmlResponse(response: Response): boolean {
@@ -56,20 +62,21 @@ export function mapModernApiPath(path: string): string {
   return path;
 }
 
-function buildCandidatePaths(path: string): string[] {
+function buildCandidatePaths(path: string, method: string): string[] {
   const normalizedPath = normalizePath(path);
   const candidates = new Set<string>();
+  const includeNonApiVariant = method === 'GET' || method === 'HEAD';
 
   const direct = normalizePath(normalizedPath);
   const legacy = normalizePath(mapLegacyApiPath(normalizedPath));
   const modern = normalizePath(mapModernApiPath(normalizedPath));
 
   [direct, legacy, modern].forEach((basePath) => {
-    withOrWithoutApiPrefix(basePath).forEach((candidate) => {
+    withOrWithoutApiPrefix(basePath, includeNonApiVariant).forEach((candidate) => {
       candidates.add(candidate);
       if (candidate.startsWith(V1_PREFIX)) {
         candidates.add(candidate.replace(/^\/api\/v1\//, '/api/'));
-      } else if (candidate.startsWith('/api/') && !candidate.startsWith(V1_PREFIX)) {
+      } else if (candidate.startsWith('/api/') && !candidate.startsWith(V1_PREFIX) && includeNonApiVariant) {
         candidates.add(candidate.replace(/^\/api\//, '/api/v1/'));
       }
     });
@@ -80,7 +87,8 @@ function buildCandidatePaths(path: string): string[] {
 
 export async function fetchCompat(baseUrl: string, path: string, init?: RequestInit) {
   const base = (baseUrl || '').replace(/\/$/, '');
-  const candidates = buildCandidatePaths(path);
+  const method = String(init?.method || 'GET').toUpperCase();
+  const candidates = buildCandidatePaths(path, method);
 
   let lastResponse: Response | null = null;
   let lastHtmlOkResponse: Response | null = null;
