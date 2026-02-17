@@ -171,7 +171,7 @@ const translation: Record<Language, AboutPageTranslations> = {
       title: 'ПЕРЕСТАНЬ БЫТЬ ДОБЫЧЕЙ — СТАНЬ ХИЩИНКОМ',
       p1: [
         { text: 'HODL HUNT', class: "font-bold" }, 
-        { text: ' — стратегическая PvP-игра на блокчейне TON, полностью работающая на смарт-контракте.' }
+        { text: ' — стратегическая PvP-игра c TON-платежами, где игровая логика работает через backend и базу данных.' }
       ],
       p2: 'Ты создаёшь морского жителя с желаемым весом в TON и управляешь его жизнью.',
       p3: [
@@ -179,13 +179,13 @@ const translation: Record<Language, AboutPageTranslations> = {
       ],
       p4: 'Если жителя не покормили по истечении таймера голода, он переходит в статус жертвы и становится доступен для охоты.',
       p5: 'Ты можешь охотиться на жителей других игроков, которые не покормили их вовремя, и забирать их TON себе.',
-      p6: 'Правила игры зашиты в смарт-контракт и не могут быть изменены.',
+      p6: 'Игровые правила и лимиты централизованно публикуются backend-сервисом и применяются единообразно для всех игроков.',
       p7: 'Создатели HODL HUNT не имеют доступа к средствам и не могут вмешиваться в процесс.',
     },
     earnSection: {
       title: '💸 Как распределяется TON в HODL HUNT',
       p1: 'В HODL HUNT нет токенов, эмиссии и «наград от системы».',
-      p2: 'Весь TON в игре — это средства игроков, которые перераспределяются между игроками через смарт-контракт.',
+      p2: 'Экономика TON в игре строится на действиях игроков, а перераспределение рассчитывается сервером и фиксируется в базе данных.',
       p3: [
         { text: 'Игрок получает TON из ' },
         { text: 'шести источников:', class: "font-bold" },
@@ -216,7 +216,7 @@ const translation: Record<Language, AboutPageTranslations> = {
           { text: ' — охотясь на жертв, игрок напрямую забирает их TON.' },
         ],
       ],
-      p4: 'Все выплаты происходят напрямую через смарт-контракт.',
+      p4: 'Выплаты и начисления проводятся backend-сервисом после подтверждённых действий пользователя.',
       p5: 'Никаких токенов, надстроек и инфляции.',
       p6: [
         { text: '50% всех комиссий игры распределяется между жителями океана и начисляется пропорционально их весу.', class: "font-bold" },
@@ -630,7 +630,7 @@ const translation: Record<Language, AboutPageTranslations> = {
         ],
         [
           { text: 'Все действия происходят ' },
-          { text: 'только через смарт-контракт', class: "font-bold" },
+          { text: 'через подтверждение пользователя + backend-обработку', class: "font-bold" },
         ],
         [
           { text: 'Контракт ' },
@@ -663,20 +663,20 @@ const translation: Record<Language, AboutPageTranslations> = {
       title: 'STOP BEING PREY — BECOME A PREDATOR',
       p1: [
         { text: 'HODL HUNT', style: { fontWeight: 'bold' } },
-        { text: ' — a strategic PvP game on the TON blockchain, fully powered by a smart contract.' }
+        { text: ' — a strategic PvP game with TON payments where gameplay is server-driven and backed by a database.' }
       ],
       p2: 'You create a Sea Dweller with a chosen weight in TON and manage its life cycle.',
       p3: 'All you need to do to keep your Dweller safe is to feed it once every 7 days.',
       p4: 'If a Dweller is not fed before the hunger timer expires, it enters the prey state and becomes available for hunting.',
       p5: 'You can hunt Dwellers of other players who failed to feed them in time and claim their TON.',
-      p6: 'The game rules are embedded in the smart contract and cannot be changed.',
+      p6: 'Game rules and limits are published by backend services and applied consistently for all players.',
       p7: 'The creators of HODL HUNT have no access to player funds and cannot interfere with the process.',
     },
 
     earnSection: {
       title: '💸 How TON is distributed in HODL HUNT',
       p1: 'HODL HUNT has no tokens, no emissions, and no “system rewards.”',
-      p2: 'All TON in the game belongs to players and is redistributed between them via the smart contract.',
+      p2: 'The TON economy is player-driven, while redistribution is calculated by backend services and stored in the database.',
       p3: [
         { text: 'Players receive TON from ' },
         { text: 'six sources:', style: { fontWeight: 'bold' } },
@@ -707,7 +707,7 @@ const translation: Record<Language, AboutPageTranslations> = {
           { text: ' — by hunting prey, you directly claim their TON.' },
         ],
       ],
-      p4: 'All payouts are executed directly through the smart contract.',
+      p4: 'Payouts and accruals are executed by backend services after user-confirmed actions.',
       p5: 'No tokens, no layers, no inflation.',
       p6: '50% of all game fees are distributed among Ocean Dwellers proportionally to their weight.',
     },
@@ -1111,7 +1111,7 @@ const translation: Record<Language, AboutPageTranslations> = {
         ],
         [
           { text: 'All actions occur ' },
-          { text: 'only through the smart contract', class: "font-bold" },
+          { text: 'through user confirmation and backend settlement', class: "font-bold" },
         ],
         [
           { text: 'Contract ' },

@@ -159,7 +159,7 @@ export const LandingPage = () => {
         const token = (typeof window !== 'undefined'
           ? (window.localStorage.getItem('authToken') || window.localStorage.getItem('accessToken'))
           : null);
-        const res = await fetchCompat(base, '/api/me/fish', {
+        const res = await fetchCompat(base, '/api/v1/me/fish', {
           cache: 'no-store',
           credentials: 'include',
           headers: token ? { Authorization: `Bearer ${token}` } : undefined,
