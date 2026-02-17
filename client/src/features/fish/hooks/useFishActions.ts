@@ -1,6 +1,9 @@
 import { useTx } from '../../../components/TxOverlay';
 import { getApiBaseUrlSync } from '../../../shared/api/baseUrl';
 import { fetchCompat } from '../../../shared/api/compat';
+import { useTonConnectUI } from '@tonconnect/ui-react';
+import { loadRuntimeConfig } from '../../../config/runtimeConfig';
+import { buildTonActionTx, buildTonFeedTx } from '../../../ton/tx-ton-ocean';
 
 export type TxEntityMeta = {
   fishId?: number;
@@ -96,10 +99,26 @@ async function getFishVersion(fishId: number): Promise<number> {
 
 export function useFishActions() {
   const { runTx } = useTx();
+  const [tonConnectUI] = useTonConnectUI();
+
+  const requestTonConfirmation = async (txBuilder: (oceanAddress: string) => any) => {
+    const { OCEAN_TON } = await loadRuntimeConfig();
+    const oceanAddress = String(OCEAN_TON || '').trim();
+    if (!oceanAddress) {
+      throw new Error('OCEAN_TON contract address is not configured');
+    }
+    const tx = txBuilder(oceanAddress);
+    const result = await tonConnectUI.sendTransaction(tx as any);
+    return String((result as any)?.boc || 'ton-sent');
+  };
 
   const feedFish = async ({ fishId, amountLamports, processingText, actionText, entity, waitingForCloseTx }: FeedParams) => {
     await runTx(
       async () => {
+        await requestTonConfirmation((oceanAddress) =>
+          buildTonFeedTx(oceanAddress, fishId, (amountLamports / 1_000_000_000).toFixed(9)),
+        );
+
         const expectedVersion = await getFishVersion(fishId);
         await apiRequest(`/api/fish/${fishId}/feed`, {
           method: 'POST',
@@ -113,7 +132,7 @@ export function useFishActions() {
         if (entity && updatedEntity && Object.keys(updatedEntity).length) {
           Object.entries(updatedEntity).forEach(([key, value]) => {
             const typedKey = key as keyof TxEntityMeta;
-            entity[typedKey] = value as TxEntityMeta[keyof TxEntityMeta];
+            (entity as Record<keyof TxEntityMeta, TxEntityMeta[keyof TxEntityMeta] | undefined>)[typedKey] = value as TxEntityMeta[keyof TxEntityMeta];
           });
         }
 
@@ -130,6 +149,8 @@ export function useFishActions() {
         const myFish = (await apiRequest('/api/me/fish')) as BackendFish[];
         const hunterFish = (Array.isArray(myFish) ? myFish : []).find((fish) => Number(fish?.id) === Number(hunterId)) || myFish?.[0];
         if (!hunterFish?.id) throw new Error('No hunter fish');
+
+        await requestTonConfirmation((oceanAddress) => buildTonActionTx(oceanAddress, 'mark', preyId));
 
         const preyVersion = await getFishVersion(preyId);
         await apiRequest(`/api/fish/${hunterFish.id}/place-mark`, {
@@ -152,6 +173,8 @@ export function useFishActions() {
   const huntFish = async ({ hunterId, preyId, processingText, actionText, entity, waitingForCloseTx }: HuntParams) => {
     await runTx(
       async () => {
+        await requestTonConfirmation((oceanAddress) => buildTonActionTx(oceanAddress, 'hunt', preyId));
+
         const hunterVersion = await getFishVersion(hunterId);
         const preyVersion = await getFishVersion(preyId);
 
@@ -175,6 +198,8 @@ export function useFishActions() {
   const exitFish = async ({ fishId, processingText, actionText, entity, waitingForCloseTx }: ExitParams) => {
     await runTx(
       async () => {
+        await requestTonConfirmation((oceanAddress) => buildTonActionTx(oceanAddress, 'exit', fishId));
+
         const expectedVersion = await getFishVersion(fishId);
         await apiRequest(`/api/fish/${fishId}/exit`, {
           method: 'POST',

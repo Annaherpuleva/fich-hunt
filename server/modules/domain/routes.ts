@@ -12,6 +12,10 @@ import { domainModuleService } from "./service"
 
 const idParam = z.object({ id: z.coerce.number().int().positive() })
 const amountSchema = z.coerce.bigint().refine((value) => value > BigInt(0), "must be > 0")
+const preySearchQuery = z.object({
+  walletAddress: z.string().min(16).max(128).optional(),
+  name: z.string().min(1).max(120).optional(),
+})
 
 export function setupDomainModuleRoutes(app: Express) {
   app.get("/api/ocean/state", (_req, res) => {
@@ -31,6 +35,21 @@ export function setupDomainModuleRoutes(app: Express) {
 
   app.get("/api/me/fish", verifyJWT, (req, res) => {
     respondWithContract(res, z.array(fishContract), domainModuleService.listFishByOwner(req.user!.sub))
+  })
+
+  app.get("/api/prey/search", verifyJWT, (req, res) => {
+    const parsed = preySearchQuery.safeParse(req.query)
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() })
+
+    respondWithContract(
+      res,
+      z.array(fishContract),
+      domainModuleService.searchPrey({
+        hunterUserId: req.user!.sub,
+        victimWalletAddress: parsed.data.walletAddress,
+        victimName: parsed.data.name,
+      }),
+    )
   })
 
   app.post("/api/fish/create", verifyJWT, (req, res) => {

@@ -24,6 +24,7 @@ const {
 function resetState() {
   appState.users.clear()
   appState.usersByTelegramId.clear()
+  appState.userWalletAddressByUserId.clear()
   appState.sessions.clear()
   appState.consumedInitDataHashes.clear()
   appState.fish.clear()

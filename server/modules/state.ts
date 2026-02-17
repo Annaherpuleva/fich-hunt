@@ -50,6 +50,7 @@ export type StoredGameEvent = {
 class InMemoryState {
   users = new Map<number, AppUser>()
   usersByTelegramId = new Map<string, AppUser>()
+  userWalletAddressByUserId = new Map<number, string>()
   sessions = new Map<string, { userId: number; createdAt: Date }>()
   consumedInitDataHashes = new Set<string>()
   fish = new Map<number, Fish>()

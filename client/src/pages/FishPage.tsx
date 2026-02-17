@@ -170,6 +170,7 @@ const FishPage: React.FC = () => {
   const huntPageSize = 8;
   const [hideMarkedFish, setHideMarkedFish] = useState<boolean>(false);
   const [showPreyMinValue, setShowPreyMinValue] = useState<boolean>(false);
+  const [preySearchQuery, setPreySearchQuery] = useState<string>('');
   const [preyMinLamports, setPreyMinLamports] = useState<number>(10_000_000); // 0.5 TON
   const [preyMinValueRaw, setPreyMinValueRaw] = useState<string>('0.01');
   // const fishPda = React.useMemo(() => {
@@ -1566,13 +1567,21 @@ const FishPage: React.FC = () => {
             const withoutMarked = hideMarkedFish
               ? sortedAvailable.filter((f) => !hasActiveMark(f) || f.markedByHunterId === fishId)
               : sortedAvailable;
-            const displayList = showPreyMinValue
+            const searchText = preySearchQuery.trim().toLowerCase();
+            const withSearch = searchText
               ? withoutMarked.filter((f) => {
+                const byName = String(f.name || '').toLowerCase().includes(searchText);
+                const byOwner = String(f.owner || '').toLowerCase().includes(searchText);
+                return byName || byOwner;
+              })
+              : withoutMarked;
+            const displayList = showPreyMinValue
+              ? withSearch.filter((f) => {
                 const vLamports = Number(f.valueLamports);
                 if (!vLamports) return false;
                 return vLamports >= preyMinLamports;
               })
-              : withoutMarked;
+              : withSearch;
 
             const totalPages = Math.max(1, Math.ceil(displayList.length / huntPageSize));
             const safePage = Math.min(huntPage, totalPages);
@@ -1600,6 +1609,18 @@ const FishPage: React.FC = () => {
                 </div>
                 {available.length > 0 && (
                   <>
+                    <div className="mt-[20px] w-full max-w-[360px]">
+                      <input
+                        type="text"
+                        value={preySearchQuery}
+                        onChange={(e) => {
+                          setPreySearchQuery(e.target.value);
+                          setHuntPage(1);
+                        }}
+                        placeholder={language === 'ru' ? 'Поиск жертвы по имени или адресу' : 'Search prey by name or wallet'}
+                        className="w-full h-[40px] rounded-[12px] bg-[#101014] border border-white/15 px-3 text-white placeholder:text-white/50 text-sm"
+                      />
+                    </div>
                     <label className="mt-[20px] inline-flex items-center gap-2 cursor-pointer select-none">
                       <input
                         type="checkbox"

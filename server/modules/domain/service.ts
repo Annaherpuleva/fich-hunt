@@ -46,6 +46,25 @@ export class DomainModuleService {
     return Array.from(appState.fish.values()).filter((fish) => fish.ownerUserId === ownerUserId)
   }
 
+  searchPrey(filters: { hunterUserId?: number; victimWalletAddress?: string; victimName?: string }): Fish[] {
+    const walletFilter = filters.victimWalletAddress?.trim().toLowerCase()
+    const nameFilter = filters.victimName?.trim().toLowerCase()
+
+    return Array.from(appState.fish.values()).filter((fish) => {
+      if (fish.status !== "alive") return false
+      if (filters.hunterUserId && fish.ownerUserId === filters.hunterUserId) return false
+
+      if (walletFilter) {
+        const ownerWallet = appState.userWalletAddressByUserId.get(fish.ownerUserId)
+        if (!ownerWallet || ownerWallet.toLowerCase() !== walletFilter) return false
+      }
+
+      if (nameFilter && !fish.name.toLowerCase().includes(nameFilter)) return false
+
+      return true
+    })
+  }
+
   saveFish(fish: Fish) {
     appState.fish.set(fish.id, fish)
   }
