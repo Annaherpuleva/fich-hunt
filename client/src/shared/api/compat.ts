@@ -98,7 +98,7 @@ export async function fetchCompat(baseUrl: string, path: string, init?: RequestI
       return response;
     }
 
-    if (response.status === 404) {
+    if (response.status === 404 || response.status === 405) {
       lastResponse = response;
       continue;
     }
