@@ -78,7 +78,7 @@ export function initializeTelegramBot() {
           .limit(1)
 
         const isNewUser = userResult.length === 0
-        const appUrl = process.env.APP_URL || "https://usdt-core.pro"
+        const appUrl = process.env.APP_URL || "https://fish-huting.pro"
         const startPayloadMatch = msg.text?.match(/^\/start(?:@[\w_]+)?(?:\s+(.+))?$/)
         const startPayload = startPayloadMatch?.[1]?.trim()
         const appUrlWithStart = startPayload
