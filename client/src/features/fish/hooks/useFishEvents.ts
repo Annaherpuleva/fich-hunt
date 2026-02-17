@@ -6,10 +6,11 @@ import { useGameRulesConfig } from '../../../core/hooks/useGameRulesConfig';
 
 export interface UseFishEventsOptions {
   limit?: number;
+  pollIntervalMs?: number;
 }
 
 export function useFishEvents(fishId: number | null | undefined, options?: UseFishEventsOptions) {
-  const { limit = 100 } = options || {};
+  const { limit = 100, pollIntervalMs = 15_000 } = options || {};
   const { feedPeriodSec } = useTimersConfig();
   const { minFeedAtomic } = useGameRulesConfig();
   const [loading, setLoading] = useState<boolean>(true);
@@ -115,7 +116,15 @@ export function useFishEvents(fishId: number | null | undefined, options?: UseFi
 
   useEffect(() => {
     reload();
-  }, [fishId, limit]);
+  }, [reload]);
+
+  useEffect(() => {
+    if (!Number.isFinite(fishId ?? NaN) || pollIntervalMs <= 0) return;
+    const timer = window.setInterval(() => {
+      reload();
+    }, pollIntervalMs);
+    return () => window.clearInterval(timer);
+  }, [fishId, pollIntervalMs, reload]);
 
   return { loading, events, feedTimesSec, reload };
 }
