@@ -138,7 +138,7 @@ const FishHuntCard: React.FC<Props> = ({
     return `${base} ${duration}`;
   };
 
-  // Compute mark cost per specifications and on-chain logic:
+  // Compute mark cost by backend-driven game rules (fetched from backend config/state):
   // окно установки метки — только последние 24 часа до момента "жертвы",
   // при этом в последние 3 часа ставка выше. После наступления статуса "жертва"
   // новые метки ставить нельзя.
