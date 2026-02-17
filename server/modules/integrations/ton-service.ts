@@ -1,5 +1,6 @@
 import { appState } from "../state"
 import { billingPaymentsService } from "../billing/payments-service"
+import { gameEventsService } from "../events/service"
 
 const MIN_CONFIRMATIONS = 1
 const DEFAULT_USDT_DEPOSIT_ADDRESS = process.env.TON_USDT_DEPOSIT_ADDRESS ?? "UQDBSgcChGzgjE7DxjnirzwGoWvfiLRsWiZ6zypMbMcbwMX7"
@@ -54,6 +55,12 @@ export class TonIntegrationService {
 
       const idempotencyKey = `deposit:${tx.txHash}`
       billingPaymentsService.confirmPayment(match.id, tx.txHash, idempotencyKey)
+      gameEventsService.record({
+        eventType: "ton_deposit_confirmed",
+        actorUserId: match.userId,
+        txHash: tx.txHash,
+        payload: { paymentId: match.id, amount: tx.amount.toString(), memo: tx.memo ?? null },
+      })
       appState.processedInboundTxHashes.add(tx.txHash)
       confirmed += 1
     }

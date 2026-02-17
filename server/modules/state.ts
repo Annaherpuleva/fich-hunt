@@ -37,6 +37,16 @@ export type WorkerAlert = {
   txHash?: string
 }
 
+export type StoredGameEvent = {
+  id: number
+  eventType: string
+  fishId?: number
+  actorUserId?: number
+  payload?: Record<string, unknown>
+  comment: string
+  createdAt: Date
+}
+
 class InMemoryState {
   users = new Map<number, AppUser>()
   usersByTelegramId = new Map<string, AppUser>()
@@ -51,9 +61,11 @@ class InMemoryState {
   withdrawalQueue: WithdrawalQueueItem[] = []
   withdrawalDispatchLocks = new Set<number>()
   workerAlerts: WorkerAlert[] = []
+  gameEvents: StoredGameEvent[] = []
   ocean: OceanState
   private fishSeq = 1
   private paymentSeq = 1
+  private gameEventSeq = 1
 
   constructor() {
     const oceanService = new OceanService()
@@ -66,6 +78,10 @@ class InMemoryState {
 
   nextPaymentId(): number {
     return this.paymentSeq++
+  }
+
+  nextGameEventId(): number {
+    return this.gameEventSeq++
   }
 }
 

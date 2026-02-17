@@ -87,4 +87,16 @@ assert.equal(balance, BigInt(1300))
 assert.equal(appState.users.size >= 1, true)
 assert.equal(appState.workerAlerts.some((alert) => alert.type === "deposit_unmatched"), true)
 assert.equal(appState.workerAlerts.some((alert) => alert.type === "withdrawal_retry"), true)
+
+const createEvent = appState.gameEvents.find((event) => event.eventType === "fish_created")
+assert.ok(createEvent)
+assert.match(createEvent!.comment, /create fich/i)
+
+const depositEvent = appState.gameEvents.find((event) => event.eventType === "ton_deposit_confirmed")
+assert.ok(depositEvent)
+assert.match(depositEvent!.comment, /deposit confirmed/i)
+
+const withdrawEvent = appState.gameEvents.find((event) => event.eventType === "ton_withdrawal_sent")
+assert.ok(withdrawEvent)
+assert.match(withdrawEvent!.comment, /withdrawal sent/i)
 console.log("backend-modules.test.ts: ok")
