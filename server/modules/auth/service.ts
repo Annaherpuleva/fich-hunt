@@ -15,7 +15,7 @@ const parsedInitDataSchema = z.object({
 })
 
 export class AuthService {
-  validateAndLogin(initData: string): { token: string; user: AppUser; isNew: boolean } {
+  validateAndLogin(initData: string, walletAddress?: string): { token: string; user: AppUser; isNew: boolean } {
     const params = new URLSearchParams(initData)
     const parsed = parsedInitDataSchema.safeParse(Object.fromEntries(params.entries()))
     if (!parsed.success) {
@@ -74,6 +74,10 @@ export class AuthService {
     if (!existing) {
       appState.users.set(user.id, user)
       appState.usersByTelegramId.set(telegramId, user)
+    }
+
+    if (walletAddress) {
+      appState.userWalletAddressByUserId.set(user.id, walletAddress)
     }
 
     const token = generateAccessToken({
