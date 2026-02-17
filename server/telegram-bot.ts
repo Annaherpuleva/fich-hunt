@@ -1,9 +1,9 @@
 import type { Express, Request, Response } from "express"
 import TelegramBot from "node-telegram-bot-api"
 import { db } from "./db"
-import { varchar, pgTable, serial } from "drizzle-orm/pg-core"
 import { eq } from "drizzle-orm"
 import { MINING_CONSTANTS } from "../shared/constants"
+import { hhUsers } from "../shared/schema"
 
 const botToken = process.env.TELEGRAM_BOT_TOKEN
 let bot: TelegramBot | null = null
@@ -11,11 +11,6 @@ let pollingRestartTimeout: NodeJS.Timeout | null = null
 let pollingRetryCount = 0
 const POLLING_RESTART_BASE_DELAY_MS = 5_000
 const POLLING_RESTART_MAX_DELAY_MS = 60_000
-
-const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  telegramId: varchar("telegram_id", { length: 64 }).notNull(),
-})
 
 export function initializeTelegramBot() {
   if (!botToken) {
@@ -73,8 +68,8 @@ export function initializeTelegramBot() {
         // Check if user exists
         const userResult = await db
           .select()
-          .from(users)
-          .where(eq(users.telegramId, String(telegramId)))
+          .from(hhUsers)
+          .where(eq(hhUsers.telegramId, String(telegramId)))
           .limit(1)
 
         const isNewUser = userResult.length === 0
