@@ -65,7 +65,10 @@ export function mapModernApiPath(path: string): string {
 function buildCandidatePaths(path: string, method: string): string[] {
   const normalizedPath = normalizePath(path);
   const candidates = new Set<string>();
-  const includeNonApiVariant = method === 'GET' || method === 'HEAD';
+  // Some production gateways expose write routes without the `/api` prefix
+  // while still serving legacy `/api/v1/*` URLs in other environments.
+  // Keep root-level variants for these endpoints as a last-resort fallback.
+  const includeNonApiVariant = method === 'GET' || method === 'HEAD' || normalizedPath.startsWith(V1_PREFIX);
 
   const direct = normalizePath(normalizedPath);
   const legacy = normalizePath(mapLegacyApiPath(normalizedPath));
