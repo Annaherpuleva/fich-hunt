@@ -4,6 +4,7 @@ import { registerRoutes } from "./routes/index"
 import { scheduleMiningRewards } from "./cron/mining-rewards"
 import { scheduleDailyBonuses } from "./cron/daily-bonus"
 import { initializeTelegramBot } from "./telegram-bot"
+import { hasTables } from "./db"
 
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
 const adminAttemptStore = new Map<string, { count: number; blockedUntil: number }>()
@@ -217,11 +218,16 @@ export default async function runApp(setup: (app: Express, server: Server) => Pr
   // Initialize Telegram bot for handling /start command and subscription info
   initializeTelegramBot()
 
-  // Schedule mining rewards cron job
-  scheduleMiningRewards(app)
+  const hasLegacyMiningSchema = await hasTables("users", "bonus_transactions", "user_miners", "miners")
+  if (hasLegacyMiningSchema) {
+    // Schedule mining rewards cron job
+    scheduleMiningRewards(app)
 
-  // Schedule daily bonus accrual
-  scheduleDailyBonuses(app)
+    // Schedule daily bonus accrual
+    scheduleDailyBonuses(app)
+  } else {
+    console.warn("Legacy mining schema not detected; skipping mining and daily bonus cron scheduling")
+  }
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500

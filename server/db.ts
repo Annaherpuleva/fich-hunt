@@ -18,6 +18,22 @@ const pool = new Pool({
   allowExitOnIdle: false, // Не закрывать пул при неактивности
 })
 
+const relationExists = async (relationName: string): Promise<boolean> => {
+  const { rows } = await pool.query("SELECT to_regclass($1) AS relation", [relationName])
+  return Boolean(rows[0]?.relation)
+}
+
+export const hasTables = async (...tableNames: string[]): Promise<boolean> => {
+  for (const tableName of tableNames) {
+    const exists = await relationExists(`public.${tableName}`)
+    if (!exists) {
+      return false
+    }
+  }
+
+  return true
+}
+
 const DEFAULT_MINERS = [
   { name: "Core Start", icon: "⛏️", price: 10 },
   { name: "Core Base", icon: "🏭", price: 35 },
@@ -48,6 +64,12 @@ pool.on("error", (err) => {
 })
 
 const ensureMinersSeeded = async () => {
+  const minersTableExists = await relationExists("public.miners")
+  if (!minersTableExists) {
+    console.warn("Skipping miners bootstrap: public.miners table does not exist yet")
+    return
+  }
+
   const { rows } = await pool.query("SELECT 1 FROM miners LIMIT 1")
   if (rows.length > 0) return
 

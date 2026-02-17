@@ -1,7 +1,7 @@
 import type { Express, Request, Response } from "express"
 import TelegramBot from "node-telegram-bot-api"
 import { db } from "./db"
-import { users } from "../shared/schema"
+import { varchar, pgTable, serial } from "drizzle-orm/pg-core"
 import { eq } from "drizzle-orm"
 import { MINING_CONSTANTS } from "../shared/constants"
 
@@ -11,6 +11,11 @@ let pollingRestartTimeout: NodeJS.Timeout | null = null
 let pollingRetryCount = 0
 const POLLING_RESTART_BASE_DELAY_MS = 5_000
 const POLLING_RESTART_MAX_DELAY_MS = 60_000
+
+const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  telegramId: varchar("telegram_id", { length: 64 }).notNull(),
+})
 
 export function initializeTelegramBot() {
   if (!botToken) {
