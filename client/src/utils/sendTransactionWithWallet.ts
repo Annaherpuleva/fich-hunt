@@ -2,7 +2,7 @@ import { Connection, Transaction, PublicKey, LAMPORTS_PER_SOL } from '@/shims/so
 import * as anchor from '@/shims/anchor';
 import { loadRuntimeConfig } from '../config/runtimeConfig';
 import { createCompatibleWallet } from './walletSignFix';
-import { getProgram } from '../config/contract';
+import { getOceanService } from '../config/runtimeGame';
 
 const INSUFFICIENT_FUNDS_ERROR = 'Error Number: 6009';
 const TON_ADDRESS_RE = /^(EQ|UQ)[A-Za-z0-9_-]{30,}$/;
@@ -66,7 +66,7 @@ export async function sendTransactionWithWallet({
   const shouldCheckBalance = !isTonWallet && balanceCheckLamports > 0;
 
   if (useManualSign) {
-    const program: any = await getProgram(undefined, {} as any);
+    const program: any = await getOceanService(undefined, {} as any);
     const methodBuilder = methodCall(program);
     const tx: Transaction = await methodBuilder.transaction();
 
@@ -94,7 +94,7 @@ export async function sendTransactionWithWallet({
   }
 
   const wallet = { publicKey, signTransaction, signAllTransactions } as any;
-  const program: any = await getProgram(undefined, wallet);
+  const program: any = await getOceanService(undefined, wallet);
   const methodBuilder = methodCall(program);
 
   if (shouldCheckBalance) {

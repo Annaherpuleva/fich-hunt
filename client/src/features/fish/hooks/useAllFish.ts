@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FishEntity } from '../../../entities/fish/types';
-import { getProgramId } from '../../../config/contract';
+import { getServiceId } from '../../../config/runtimeGame';
 import { deriveFishPda } from '../api/pda';
 import { PublicKey } from '@/shims/solanaWeb3';
 import { getPrey } from '../../../shared/api/fishApi';
@@ -69,7 +69,7 @@ export function useAllFish(hunterId?: number) {
       });
 
       const pdaMap: Record<number, string> = {};
-      const programId = await getProgramId();
+      const programId = await getServiceId();
       for (const f of list) {
         try {
           if (f.owner) pdaMap[f.id] = deriveFishPda(programId, new PublicKey(f.owner), f.id).toBase58();

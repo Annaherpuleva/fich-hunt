@@ -1,70 +1,49 @@
-import idl from '../idl/cryptofish.json';
-import { loadRuntimeConfig } from './runtimeConfig';
+import {
+  deriveOceanServiceKey,
+  getOceanConfig,
+  getOceanService,
+  getServiceId,
+  getServiceIdFromConfig,
+} from './runtimeGame';
 
-type ConnectionLike = { endpoint: string; commitment?: string };
-type WalletLike = {
-  publicKey?: { toBase58?: () => string };
-  signTransaction?: (tx: unknown) => Promise<unknown>;
-  signAllTransactions?: (txs: unknown[]) => Promise<unknown[]>;
-};
+let warned = false;
 
-const DEFAULT_PROGRAM_ID = '11111111111111111111111111111111';
-
-type ProgramLike = {
-  idl: unknown;
-  programId: string;
-  provider: {
-    connection: ConnectionLike;
-    wallet: WalletLike;
-  };
-};
-
-export function getProgramIdFromConfig(cfg: { PROGRAM_ID?: string }) {
-  const programIdStr = (cfg?.PROGRAM_ID || '').trim();
-  if (!programIdStr) {
-    return DEFAULT_PROGRAM_ID;
-  }
-  return programIdStr;
+function warnDeprecated(message: string) {
+  if (warned || typeof console === 'undefined') return;
+  warned = true;
+  console.warn(message);
 }
 
+/** @deprecated Use getServiceIdFromConfig from config/runtimeGame instead. */
+export function getProgramIdFromConfig(cfg: { PROGRAM_ID?: string; SERVICE_ID?: string; OCEAN_TON?: string }) {
+  warnDeprecated('[deprecated] config/contract.ts is deprecated. Use config/runtimeGame.ts APIs.');
+  return getServiceIdFromConfig(cfg);
+}
+
+/** @deprecated Use getServiceId from config/runtimeGame instead. */
 export async function getProgramId() {
-  const cfg = await loadRuntimeConfig();
-  return getProgramIdFromConfig(cfg);
+  warnDeprecated('[deprecated] getProgramId() is deprecated. Use getServiceId().');
+  return getServiceId();
 }
 
-export async function getProgram(connection?: ConnectionLike, wallet?: WalletLike): Promise<ProgramLike> {
-  const cfg = await loadRuntimeConfig();
-  const programId = getProgramIdFromConfig(cfg);
-  const rpcEndpoint = cfg.TON_RPC_URL || cfg.SOLANA_RPC_URL || '';
-  const conn: ConnectionLike = connection || { endpoint: rpcEndpoint, commitment: 'confirmed' };
-  const safeWallet: WalletLike = wallet || {};
-
-  if (!safeWallet.publicKey) {
-    safeWallet.publicKey = { toBase58: () => '11111111111111111111111111111111' };
-    safeWallet.signTransaction = async (tx: unknown) => tx;
-    safeWallet.signAllTransactions = async (txs: unknown[]) => txs;
-  }
-
-  return {
-    idl,
-    programId,
-    provider: {
-      connection: conn,
-      wallet: safeWallet,
-    },
-  };
+/** @deprecated Use getOceanService from config/runtimeGame instead. */
+export async function getProgram(connection?: { endpoint: string; commitment?: string }, wallet?: any) {
+  warnDeprecated('[deprecated] getProgram() is deprecated. Use getOceanService().');
+  return getOceanService(connection, wallet);
 }
 
+/** @deprecated Use getOceanConfig from config/runtimeGame instead. */
 export async function getConfig() {
-  const cfg = await loadRuntimeConfig();
+  warnDeprecated('[deprecated] getConfig() is deprecated. Use getOceanConfig().');
+  const cfg = await getOceanConfig();
   return {
-    rpcUrl: cfg.TON_RPC_URL || cfg.SOLANA_RPC_URL,
-    programId: getProgramIdFromConfig(cfg),
-    oceanPda: undefined,
-    cluster: cfg.CLUSTER || 'devnet',
+    ...cfg,
+    programId: cfg.serviceId,
   };
 }
 
+/** @deprecated Use deriveOceanServiceKey from config/runtimeGame instead. */
 export function deriveOceanPda(programId: string): string {
-  return `ocean:${programId}`;
+  warnDeprecated('[deprecated] deriveOceanPda() is deprecated. Use deriveOceanServiceKey().');
+  return deriveOceanServiceKey(programId);
 }
