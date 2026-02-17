@@ -2,6 +2,7 @@ import type { Express } from "express"
 import { z } from "zod"
 import { verifyJWT } from "../../middleware/jwt"
 import {
+  gameConfigContract,
   exitResultContract,
   fishContract,
   huntResultContract,
@@ -9,6 +10,7 @@ import {
 } from "../contracts/target-api-contracts"
 import { respondWithContract } from "../contracts/response"
 import { domainModuleService } from "./service"
+import { DOMAIN_CONSTANTS } from "../../domain/constants"
 
 const idParam = z.object({ id: z.coerce.number().int().positive() })
 const amountSchema = z.coerce.bigint().refine((value) => value > BigInt(0), "must be > 0")
@@ -18,6 +20,17 @@ const preySearchQuery = z.object({
 })
 
 export function setupDomainModuleRoutes(app: Express) {
+  app.get("/api/v1/config", (_req, res) => {
+    const commissionBps = Number((BigInt(10_000) / DOMAIN_CONSTANTS.FEED_COMMISSION_DIVISOR).toString())
+    respondWithContract(res, gameConfigContract, {
+      currencyCode: "TON",
+      atomicUnitsPerCurrency: "1000000000",
+      minDepositAtomic: DOMAIN_CONSTANTS.MIN_DEPOSIT_UNITS.toString(),
+      minFeedAtomic: DOMAIN_CONSTANTS.MIN_FEED_UNITS.toString(),
+      commissionBps,
+    })
+  })
+
   app.get("/api/ocean/state", (_req, res) => {
     respondWithContract(res, oceanStateContract, domainModuleService.getOceanState())
   })

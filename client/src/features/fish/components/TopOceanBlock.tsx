@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { loadRuntimeConfig } from '../../../config/runtimeConfig';
 import { fetchCompat } from '../../../shared/api/compat';
 import { useLanguage } from '../../../contexts/LanguageContext';
-import { formatDurationHMS } from '../../../core/utils/format';
+import { formatDurationHMS, formatGameAmount } from '../../../core/utils/format';
 import { useTimersConfig } from '../../../core/hooks/useTimersConfig';
 import { useBlockchainNowSec } from '../../../core/hooks/useBlockchainNowSec';
 
@@ -154,7 +154,7 @@ const TopOceanBlock: React.FC<TopProps> = ({ limit = 3, showCTA = true }) => {
             : '/img/fish-image-7a550f.jpg';
           const valueLamportsNum = Number(String(it.valueLamports ?? it.totalLamports ?? 0));
           const valueText = Number.isFinite(valueLamportsNum)
-            ? `${(valueLamportsNum / 1_000_000_000).toFixed(2)} SOL`
+            ? formatGameAmount(valueLamportsNum, 2)
             : '—';
           return {
             ...it,

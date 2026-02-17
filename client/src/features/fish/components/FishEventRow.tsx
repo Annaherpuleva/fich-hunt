@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatDurationHMS } from '../../../core/utils/format';
+import { formatDurationHMS, formatGameAmount, lamportsToSol } from '../../../core/utils/format';
 import { FishEvent, FishEventType } from "../hooks/fish-events.types";
 import { Translations } from "../../../locales/translations";
 export interface FishEventRowProps {
@@ -8,14 +8,14 @@ export interface FishEventRowProps {
 }
 
 const lamportsToSolDisplay = (lamports: number) => {
-  const sol = lamports / 1_000_000_000;
+  const sol = Number(lamportsToSol(lamports, 6));
   if (!Number.isFinite(sol)) return '';
   const sign = sol > 0 ? '+' : sol < 0 ? '-' : '';
 
   if (!sol) return null;
 
   return <span className={`${sol > 0 ?'text-[#27C840]' : 'text-[#FFFFFF]'} text-[13px] sm:text-[16px] font-sf-pro-display font-bold leading-[1.2] tracking-[-0.03em] whitespace-nowrap`}>
-    {sign}{Number(Math.abs(sol).toFixed(6))} SOL
+    {sign}{formatGameAmount(Math.abs(lamports), 6)}
   </span>;
 };
 

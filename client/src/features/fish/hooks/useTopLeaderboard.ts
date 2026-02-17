@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { loadRuntimeConfig } from '../../../config/runtimeConfig';
 import { fetchCompat } from '../../../shared/api/compat';
+import { formatGameAmount } from '../../../core/utils/format';
 export type TopFishItem = {
   rank: number;
   fishId: number;
@@ -49,7 +50,7 @@ export function useTopLeaderboard(page: number, limit: number, search?: string) 
             : '/img/fish-image-7a550f.jpg';
           const shareStr = String(it.shareStr ?? it.share ?? '0');
           const totalLamports = Number(String(it.valueLamports ?? it.totalLamports ?? 0));
-          const valueText = `${(totalLamports / 1_000_000_000).toFixed(2)} SOL`;
+          const valueText = formatGameAmount(totalLamports, 2);
           const lastFedAtSec = (() => {
             if (!it.lastFedAt) return undefined;
             const ts = Date.parse(it.lastFedAt);

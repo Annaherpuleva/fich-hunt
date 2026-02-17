@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getEvents } from '../../../shared/api/fishApi';
 import { FishEvent } from './fish-events.types';
-import { MIN_FEED_LAMPORTS } from '../../../core/constants';
 import { useTimersConfig } from '../../../core/hooks/useTimersConfig';
+import { useGameRulesConfig } from '../../../core/hooks/useGameRulesConfig';
 
 export interface UseFishEventsOptions {
   limit?: number;
@@ -11,6 +11,7 @@ export interface UseFishEventsOptions {
 export function useFishEvents(fishId: number | null | undefined, options?: UseFishEventsOptions) {
   const { limit = 100 } = options || {};
   const { feedPeriodSec } = useTimersConfig();
+  const { minFeedAtomic } = useGameRulesConfig();
   const [loading, setLoading] = useState<boolean>(true);
   const [events, setEvents] = useState<FishEvent[]>([]);
   const [feedTimesSec, setFeedTimesSec] = useState<number[]>([]);
@@ -82,7 +83,7 @@ export function useFishEvents(fishId: number | null | undefined, options?: UseFi
         }
         if (ev.eventType === 'FishHunted') {
           lastFedAtSec = tSec;
-          const needToFeed = Math.max(Math.floor((lamportsValue * feedPercentBps) / 10_000), MIN_FEED_LAMPORTS);
+          const needToFeed = Math.max(Math.floor((lamportsValue * feedPercentBps) / 10_000), minFeedAtomic);
           const received = Number(ev?.payloadDec?.receivedFromHuntValue || 0);
           lamportsValue += received;
           fillFeed += received;
@@ -110,7 +111,7 @@ export function useFishEvents(fishId: number | null | undefined, options?: UseFi
     } finally {
       setLoading(false);
     }
-  }, [fishId, limit, feedPeriodSec]);
+  }, [fishId, limit, feedPeriodSec, minFeedAtomic]);
 
   useEffect(() => {
     reload();
