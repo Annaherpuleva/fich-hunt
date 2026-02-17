@@ -473,7 +473,7 @@ export const translations: Record<Language, Translations> = {
           { text: 'без охоты' },
         ],
         description: [
-          { text: 'Даже если ты не охотишься, твой житель получает часть комиссии, которую смарт-контракт игры взимает с действий других игроков: создание жителя, кормление, метки, охота и продажа жителя.' },
+          { text: 'Даже если ты не охотишься, твой житель получает часть комиссии, которую игровая система начисляет с действий других игроков: создание жителя, кормление, метки, охота и продажа жителя.' },
           { text: 'Это не доходность из воздуха, как в пирамидах.', style: {display: 'block', marginTop: '20px'} },
           { text: 'Это часть реальной комиссии игры, половина которой автоматически распределяется между жителями игроков.' },
         ],
@@ -492,11 +492,11 @@ export const translations: Record<Language, Translations> = {
       title: 'Честная игра без обмана',
       description: [
         { text: 'HODL HUNT', class: 'font-bold' },
-        { text: ' полностью управляется смарт-контрактом. Здесь нет ручного управления, скрытых функций или администраторских прав.' },
-        { text: 'Все правила заданы в коде заранее и одинаковы для всех игроков. После запуска контракта никто, включая команду проекта, не может изменить механику, повлиять на охоту, распределение средств или заблокировать чей-то выход.', class: 'block mt-[20px]' }
+        { text: ' работает как серверный игровой сервис. Операции обрабатываются по единым backend-правилам без ручных подкруток в пользовательских сценариях.' },
+        { text: 'Все правила задаются в backend-конфигурации и применяются одинаково для всех игроков. Источник истины — сервер и база данных, а критичные операции проходят через подтверждение пользователя и системную валидацию.', class: 'block mt-[20px]' }
       ],
       badge: 'Ты контролируешь результат',
-      cta: 'Посмотреть смарт-контракт',
+      cta: 'Посмотреть системные правила',
     },
     landingPromo: {
       tag: 'Стань охотником',
@@ -520,12 +520,12 @@ export const translations: Record<Language, Translations> = {
         'Куда уходит админский процент и что работает сразу после создания жителя?',
       ],
       answers: [
-        'HODL HUNT скорее антискам. Игра работает на смарт-контракте TON, который невозможно изменить или «подкрутить» после запуска. Нет игровых токенов, админ-ключей и ручного управления. Вся логика зашита в коде, а каждое действие происходит ончейн и видно в блокчейне. Смарт-контракт открыт и доступен для проверки любому желающему.',
+        'HODL HUNT ориентирован на прозрачные правила. Игровая логика обрабатывается backend-сервисом, а состояние хранится в базе данных и проверяется через API. Для пользователей нет скрытых кнопок управления в игровых сценариях: действия подтверждаются и проходят валидацию по единым правилам.',
         'Здесь время входа ничего не решает. Можно зайти в любой момент. Важно только то, как ты играешь и какие решения принимаешь.',
         'Нет. Главное не забывать кормить жителя раз в 7 дней, чтобы его никто не смог укусить и забрать ваши TON. Всё остальное опционально. Можно заходить в любое время, охотиться или просто наблюдать. Интерфейс ведёт тебя сам, без сложных схем и DeFi-заморочек.',
         'В HODL HUNT нет привилегий для крупных игроков. Неважно, какой у тебя депозит и какого ты размера. Если твой житель покормлен, его невозможно укусить и забрать его TON. Потерять средства можно только в одном случае: если ты не покормил своего жителя до истечения таймера голода. После этого он становится жертвой и доступен для укуса другими игроками.',
-        'Ты рискуешь только своими TON в игре. Потерять их можно лишь в одном случае: если ты не покормил своего жителя до истечения таймера голода 7 дней, после чего другие игроки могут укусить твоего жителя и забрать его вес в TON. Смарт-контракт сам по себе ничего не забирает, все действия происходят только по правилам игры и фиксируются в блокчейне.',
-        'Админский процент распределяется автоматически смарт-контрактом в момент действия: при создании жителя 5% уходит на админ-адрес и ещё 5% — в пул океана, а при укусе жертвы 10% уходит админу и 10% сжигается из долей в пользу экономики океана. После создания житель сразу получает все базовые механики: защиту от охоты на 7 дней, стартовые таймеры и участие в общей экономике по правилам контракта.',
+        'Ты рискуешь только своими TON в игре. Потерять их можно, если не покормить жителя до истечения таймера голода 7 дней: тогда другие игроки могут укусить его и забрать его вес в TON. Система не списывает средства произвольно — действия выполняются только по правилам игры и фиксируются backend-сервисом.',
+        'Сервисная комиссия распределяется автоматически backend-логикой в момент подтверждённого действия: часть идёт на операционные расходы и развитие, часть — в игровую экономику океана. После создания житель сразу получает базовые механики: защиту от охоты на 7 дней, стартовые таймеры и участие в общей экономике по действующим правилам.',
       ],
     },
     landingTrust: {
@@ -587,13 +587,13 @@ export const translations: Record<Language, Translations> = {
         },
         rules: {
           title: 'Проверь код сам',
-          description: 'Каждое действие в HODL HUNT записывается в блокчейн. Любой игрок может в любой момент проверить транзакции, правила и распределения напрямую в смарт-контракте.',
+          description: 'Каждое действие в HODL HUNT фиксируется backend-сервисом. Игрок может проверить историю операций и актуальные правила через API и интерфейс игры.',
         },
       },
     },
     landingExit: {
       title: 'Выйди из игры в любой момент',
-      description: 'Морские жители в HODL HUNT — это не NFT, которые нужно продавать другому игроку, чтобы вернуть свои TON. В спокойном режиме океана ты можешь продать своего жителя в любой момент, а смарт-контракт автоматически вернёт тебе TON, соответствующий его текущему весу, за вычетом комиссии, указанной в правилах.\nРежим океана меняется каждый день в 00:00 UTC и определяется смарт-контрактом случайным образом. В спокойном режиме выход доступен, в опасном режиме выход временно недоступен и необходимо дождаться смены режима на спокойный океан.\nТебе не нужно искать покупателей или ликвидность. Продажа жителя всегда происходит напрямую через смарт-контракт, без участия других игроков.',
+      description: 'Морские жители в HODL HUNT — это не NFT, которые нужно продавать другому игроку, чтобы вернуть свои TON. В спокойном режиме океана ты можешь продать своего жителя в любой момент, а backend-сервис рассчитает сумму возврата TON по текущему весу с учётом комиссии из правил.\nРежим океана меняется каждый день в 00:00 UTC по правилам системы. В спокойном режиме выход доступен, в опасном режиме выход временно недоступен и необходимо дождаться смены режима на спокойный океан.\nТебе не нужно искать покупателей или ликвидность. Продажа жителя выполняется как системная операция через backend без участия других игроков.',
     },
     landingQuotes: [
       {
@@ -602,11 +602,11 @@ export const translations: Record<Language, Translations> = {
       },
       {
         title: 'Без скама',
-        description: 'Правила игры заданы в смарт-контракте без права изменения. Технически невозможно изменить механику или создать преимущества для отдельных игроков.',
+        description: 'Правила игры публикуются backend-сервисом и применяются единообразно. Изменения проходят через релизы и прозрачные обновления конфигурации, без привилегий для отдельных игроков.',
       },
       {
         title: 'Без обмана',
-        description: 'Каждое действие в игре фиксируется в блокчейне и видно в Solscan — любой может проверить историю.',
+        description: 'Каждое действие в игре фиксируется backend-сервисом, а историю можно проверить в интерфейсе и через API.',
       },
       {
         title: 'Без инсайдов',
@@ -983,7 +983,7 @@ export const translations: Record<Language, Translations> = {
         ],
         description: [
           {
-            text: 'Even if you don’t hunt, your Dweller receives a share of the fees that the game’s smart contract collects from other players’ actions: Dweller creation, feeding, marks, hunting, and selling.',
+            text: 'Even if you do not hunt, your Dweller receives a share of the system fees collected from other players’ actions: creation, feeding, marks, hunting, and selling.',
           },
           {
             text: 'This is not yield out of thin air, like in pyramids.',
@@ -1012,7 +1012,7 @@ export const translations: Record<Language, Translations> = {
           class: 'font-bold',
         },
         {
-          text: ' is fully governed by a smart contract. There is no manual control, hidden functions, or admin privileges.',
+          text: ' operates as a server-driven game service. Actions are processed under consistent backend rules without hidden user-facing overrides.',
         },
         {
           text: 'All rules are defined in code in advance and are the same for all players. After the contract is deployed, no one — including the project team — can change the mechanics, influence hunting, fund distribution, or block anyone’s exit.',
@@ -1050,12 +1050,12 @@ export const translations: Record<Language, Translations> = {
         'Where does the admin percentage go, and is everything active right after Dweller creation?',
       ],
       answers: [
-        'HODL HUNT is closer to an anti-scam. The game runs on an immutable TON smart contract that cannot be changed or “tuned” after launch. There are no game tokens, admin keys, or manual control. All logic is embedded in code, and every action happens on-chain and is visible on the blockchain. The smart contract is open and available for anyone to review.',
+        'HODL HUNT is focused on transparent gameplay. Core logic is processed by backend services and state is stored in a database exposed via API. There are no hidden user-facing controls in gameplay flows: actions are confirmed and validated under consistent system rules.',
         'Entry timing doesn’t matter here. You can join at any moment. What matters is how you play and the decisions you make.',
         'No. The main thing is to remember to feed your Dweller once every 7 days so no one can bite it and take your TON. Everything else is optional. You can log in anytime, hunt, or simply observe. The interface guides you without complex schemes or DeFi headaches.',
         'HODL HUNT has no privileges for large players. Your deposit size doesn’t matter. If your Dweller is fed, it cannot be bitten and its TON cannot be taken. Funds can only be lost in one case: if you fail to feed your Dweller before the hunger timer expires. At that point, it becomes prey and can be bitten by other players.',
-        'You only risk your TON in the game. They can be lost in only one situation: if you don’t feed your Dweller before the 7-day hunger timer expires, after which other players can bite your Dweller and take its weight in TON. The smart contract itself never takes funds — all actions happen strictly according to the game rules and are recorded on the blockchain.',
-        'The admin percentage is distributed automatically by the smart contract at the moment of each action: during Dweller creation, 5% goes to the admin address and another 5% goes to the ocean pool; during a successful bite, 10% goes to admin and another 10% is removed from shares for ocean economics. Right after creation, a Dweller already has all core mechanics enabled: 7-day hunt protection, initial timers, and participation in the shared economy under contract rules.',
+        'You only risk your TON in the game. They can be lost if you do not feed your Dweller before the 7-day hunger timer expires, after which other players can bite your Dweller and take its weight in TON. The system does not withdraw funds arbitrarily — actions follow game rules and are recorded by backend services.',
+        'Service fees are distributed automatically by backend logic when an action is confirmed: part goes to operations and product development, and part supports the shared ocean economy. Right after creation, a Dweller has all core mechanics enabled: 7-day hunt protection, initial timers, and participation in the shared economy under active rules.',
       ],
     },
     landingTrust: {
@@ -1124,13 +1124,13 @@ export const translations: Record<Language, Translations> = {
         },
         rules: {
           title: 'Verify the code yourself',
-          description: 'Every action in HODL HUNT is recorded on the blockchain. Any player can verify transactions, rules, and distributions directly in the smart contract at any time.',
+          description: 'Every action in HODL HUNT is recorded by backend services. Any player can verify operation history, rules, and distributions through the API and game interface.',
         },
       },
     },
     landingExit: {
       title: 'Leave the game anytime',
-      description: 'Sea Dwellers in HODL HUNT are not NFTs that must be sold to another player in order to get your TON back. In calm ocean mode, you can sell your Dweller at any time, and the smart contract will automatically return TON equal to its current weight, minus the fee defined in the rules.\nThe ocean mode changes every day at 00:00 UTC and is randomly determined by the smart contract. In calm mode, exiting is available; in dangerous mode, exiting is temporarily unavailable and you must wait for the ocean to switch back to calm.\nYou don’t need to look for buyers or liquidity. Selling a Dweller always happens directly through the smart contract, without involving other players.',
+      description: 'Sea Dwellers in HODL HUNT are not NFTs that must be sold to another player in order to get your TON back. In calm ocean mode, you can sell your Dweller at any time, and backend services calculate the TON return by current weight minus the fee defined in rules.\nOcean mode changes every day at 00:00 UTC according to system rules. In calm mode, exiting is available; in dangerous mode, exiting is temporarily unavailable and you must wait for calm mode.\nYou do not need to search for buyers or liquidity. Selling a Dweller is a backend system operation without involving other players.',
     },
     landingQuotes: [
       {
@@ -1139,11 +1139,11 @@ export const translations: Record<Language, Translations> = {
       },
       {
         title: 'No scam',
-        description: 'No one can change the rules or freeze your funds — on-chain only.',
+        description: 'Rules are published through backend releases, and user funds are processed only through confirmed system operations.',
       },
       {
         title: 'No cheating',
-        description: 'Every move is on-chain and visible in Solscan — full transparency guaranteed.',
+        description: 'Every move is recorded by backend services and visible in in-game history/API — transparent operations.',
       },
       {
         title: 'No insiders',

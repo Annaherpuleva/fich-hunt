@@ -146,7 +146,7 @@ export function useFishActions() {
   const placeMark = async ({ hunterId, preyId, processingText, actionText, entity, waitingForCloseTx }: MarkParams) => {
     await runTx(
       async () => {
-        const myFish = (await apiRequest('/api/me/fish')) as BackendFish[];
+        const myFish = (await apiRequest('/api/v1/me/fish')) as BackendFish[];
         const hunterFish = (Array.isArray(myFish) ? myFish : []).find((fish) => Number(fish?.id) === Number(hunterId)) || myFish?.[0];
         if (!hunterFish?.id) throw new Error('No hunter fish');
 

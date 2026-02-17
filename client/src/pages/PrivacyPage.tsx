@@ -7,7 +7,7 @@ const PRIVACY_TEXT = {
     updated: 'Последнее обновление: 14.12.2025',
     s1_title: '1. Общие положения',
     s1_p1:
-      'HODL HUNT — это децентрализованная PvP-игра, работающая исключительно через смарт-контракт в сети TON. Мы уважаем приватность пользователей и не собираем избыточные персональные данные.',
+      'HODL HUNT — это PvP-игра с серверной обработкой действий и хранением состояния в базе данных. Мы уважаем приватность пользователей и не собираем избыточные персональные данные.',
     s1_p2:
       'Используя сайт HODL HUNT, вы соглашаетесь с данной Политикой конфиденциальности.',
     s2_title: '2. Какие данные мы можем получать',
@@ -16,7 +16,7 @@ const PRIVACY_TEXT = {
     s2_p2: 'В процессе использования сайта могут автоматически обрабатываться:',
     s2_list: [
       'публичный адрес криптокошелька',
-      'данные блокчейна TON (транзакции, баланс, действия в игре)',
+      'ссылки на системные операции TON и игровые действия',
       'технические данные: IP-адрес, тип браузера, cookies',
       'обезличенная аналитика посещений сайта',
     ],
@@ -29,7 +29,7 @@ const PRIVACY_TEXT = {
       'мы не можем отменять или изменять транзакции',
     ],
     s3_p2:
-      'Все действия выполняются пользователем напрямую через его кошелёк и смарт-контракт.',
+      'Игровые действия подтверждаются пользователем и затем обрабатываются backend-сервисом с фиксацией в базе данных.',
     s4_title: '4. Как используются данные',
     s4_p1: 'Данные используются исключительно для:',
     s4_list: [
@@ -45,7 +45,7 @@ const PRIVACY_TEXT = {
       'Сайт может использовать cookies для базовой аналитики и корректной работы интерфейса. Вы можете отключить cookies в настройках браузера.',
     s6_title: '6. Ссылки на сторонние сервисы',
     s6_p1:
-      'Сайт может содержать ссылки на сторонние ресурсы (кошельки, блокчейн-обозреватели). Мы не несем ответственности за их политику конфиденциальности.',
+      'Сайт может содержать ссылки на сторонние ресурсы (кошельки, платёжные сервисы, обозреватели операций). Мы не несем ответственности за их политику конфиденциальности.',
     s7_title: '7. Изменения политики',
     s7_p1:
       'Мы можем обновлять данную Политику. Актуальная версия всегда доступна на сайте.',
@@ -59,7 +59,7 @@ const PRIVACY_TEXT = {
     updated: 'Last updated: 14.12.2025',
     s1_title: '1. General Provisions',
     s1_p1:
-      'HODL HUNT is a decentralized PvP strategy game operating entirely through a smart contract on the TON blockchain.',
+      'HODL HUNT is a PvP strategy game with server-side processing and database-backed state.',
     s1_p2:
       'We respect user privacy and do not collect unnecessary personal data. By using the HODL HUNT website, you agree to this Privacy Policy.',
     s2_title: '2. Information We May Collect',
@@ -68,7 +68,7 @@ const PRIVACY_TEXT = {
     s2_p2: 'When using the website, the following data may be processed automatically:',
     s2_list: [
       'public cryptocurrency wallet address',
-      'on-chain TON blockchain data (transactions, balances, in-game actions)',
+      'TON transaction references and in-game activity metadata',
       'technical data such as IP address, browser type, cookies',
       'anonymized website analytics',
     ],
@@ -78,10 +78,10 @@ const PRIVACY_TEXT = {
       'we do not store private keys',
       'we do not control user wallets',
       'we do not have access to user funds',
-      'we cannot reverse or modify blockchain transactions',
+      'we cannot retroactively change confirmed system operations',
     ],
     s3_p2:
-      'All interactions are performed directly by the user via their wallet and the smart contract.',
+      'User-confirmed actions are processed by backend services and recorded in the database.',
     s4_title: '4. Use of Information',
     s4_p1: 'Collected data is used solely for:',
     s4_list: [
@@ -97,7 +97,7 @@ const PRIVACY_TEXT = {
       'The website may use cookies for basic functionality and analytics purposes. You may disable cookies in your browser settings.',
     s6_title: '6. Third-Party Links',
     s6_p1:
-      'The website may contain links to third-party services such as wallets or blockchain explorers. We are not responsible for their privacy practices.',
+      'The website may contain links to third-party services such as wallets, payment services, or operation explorers. We are not responsible for their privacy practices.',
     s7_title: '7. Policy Updates',
     s7_p1:
       'This Privacy Policy may be updated periodically. The current version will always be available on the website.',

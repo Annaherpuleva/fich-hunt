@@ -11,7 +11,7 @@ async function getJsonCompat(path: string) {
 }
 
 export function getOceanState() {
-  return getJsonCompat('/api/ocean/state');
+  return getJsonCompat('/api/v1/ocean/state');
 }
 
 export function getEvents(limit: number = 200) {
@@ -19,7 +19,7 @@ export function getEvents(limit: number = 200) {
 }
 
 export function getMyFish(_owner?: string) {
-  return getJsonCompat('/api/me/fish');
+  return getJsonCompat('/api/v1/me/fish');
 }
 
 export function getPrey(hungry: boolean = true) {

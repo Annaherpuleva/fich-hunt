@@ -159,6 +159,14 @@ app.use(
 )
 app.use(express.urlencoded({ extended: false }))
 
+// API version compatibility: expose /api/v1/* while keeping existing /api/* handlers.
+app.use((req, _res, next) => {
+  if (req.url.startsWith("/api/v1/")) {
+    req.url = req.url.replace(/^\/api\/v1/, "/api")
+  }
+  next()
+})
+
 // Admin routes - 100 requests per minute (admins need more for dashboard)
 app.use("/api/admin", rateLimiter(500, 60000))
 // Withdrawals - 30 requests per minute
