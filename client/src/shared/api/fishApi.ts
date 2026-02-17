@@ -1,17 +1,27 @@
-import { getJson } from './http';
+import { getApiBaseUrlSync } from './baseUrl';
+import { fetchCompat } from './compat';
+
+async function getJsonCompat(path: string) {
+  const base = getApiBaseUrlSync();
+  const res = await fetchCompat(base, path, { credentials: 'include' });
+  if (!res.ok) {
+    throw new Error(`Request failed with ${res.status}`);
+  }
+  return res.json();
+}
 
 export function getOceanState() {
-  return getJson('/api/ocean/state?ocean=OceanTON');
+  return getJsonCompat('/api/ocean/state');
 }
 
 export function getEvents(limit: number = 200) {
-  return getJson(`/api/events?limit=${encodeURIComponent(limit)}`);
+  return getJsonCompat(`/api/events?limit=${encodeURIComponent(limit)}`);
 }
 
-export function getMyFish(owner: string) {
-  return getJson(`/api/me-fish?owner=${encodeURIComponent(owner)}`);
+export function getMyFish(_owner?: string) {
+  return getJsonCompat('/api/me/fish');
 }
 
 export function getPrey(hungry: boolean = true) {
-  return getJson(`/api/prey?hungry=${encodeURIComponent(String(hungry))}`);
+  return getJsonCompat(`/api/prey?hungry=${encodeURIComponent(String(hungry))}`);
 }
