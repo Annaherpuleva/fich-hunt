@@ -145,36 +145,41 @@ export const LandingPage = () => {
     };
   }, [connected]);
   
-  // Redirect when wallet becomes connected
+  // Redirect when wallet becomes connected.
+  // Источник истины по прогрессу пользователя — сервер (/api/me/*),
+  // а не контрактные/кошелёк-адресные эндпоинты.
   useEffect(() => {
-    if (!connected || !publicKey) return;
+    if (!connected) return;
   
     let cancelled = false;
-    const addr = publicKey.toBase58();
-  
     (async () => {
       try {
         const { API_BASE_URL } = await loadRuntimeConfig();
         const base = (API_BASE_URL || '').replace(/\/$/, '');
-        // Важно: /profile у нас, похоже, создаётся/отдаётся всегда (200 даже при первом заходе),
-        // поэтому определяем "новый/старый" кошелёк по факту прогресса: есть ли хоть одна рыба.
-        const res = await fetchCompat(base, `/api/v1/wallet/${addr}/profile`, { cache: 'no-store' });
+        const token = (typeof window !== 'undefined'
+          ? (window.localStorage.getItem('authToken') || window.localStorage.getItem('accessToken'))
+          : null);
+        const res = await fetchCompat(base, '/api/me/fish', {
+          cache: 'no-store',
+          credentials: 'include',
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        });
         if (cancelled) return;
-  
+
         if (!res.ok) return;
-        const j = await res.json();
-        const firstTime = Boolean(j?.data?.firstTime);
-  
+        const fishList = await res.json();
+        const firstTime = !Array.isArray(fishList) || fishList.length === 0;
+
         navigate(firstTime ? '/start-game' : '/my-fish', { replace: true });
       } catch (e) {
-        if (!cancelled) console.error('Failed to check wallet fish list:', e);
+        if (!cancelled) console.error('Failed to check user fish list:', e);
       }
     })();
   
     return () => {
       cancelled = true;
     };
-  }, [connected, publicKey, navigate]);
+  }, [connected, navigate]);
   
   if (!connected) {
     const handleCtaClick = () => {
