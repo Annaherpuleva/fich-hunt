@@ -2,12 +2,12 @@ import { useCallback, useEffect, useState, useRef } from 'react';
 import { useWallet } from '../../../wallet/tonWallet';
 import { PublicKey } from '@/shims/solanaWeb3';
 import { deriveFishPda } from '../api/pda';
-import { MIN_FEED_LAMPORTS } from '../../../core/constants';
 import { useBlockchainNowSec } from '../../../core/hooks/useBlockchainNowSec';
 import { loadRuntimeConfig } from '../../../config/runtimeConfig';
 import type { FishEntity } from '../../../entities/fish/types';
 import { getMyFish } from '../../../shared/api/fishApi';
 import { fetchOceanSafe } from '../../ocean/api/ocean.api';
+import { useGameRulesConfig } from '../../../core/hooks/useGameRulesConfig';
 
 const FALLBACK_AVATAR = '/img/fish-image-7a550f.jpg';
 const FEED_PERCENT_BPS_DEFAULT = 1000; // 10% fallback
@@ -15,6 +15,7 @@ const FEED_PERCENT_BPS_DEFAULT = 1000; // 10% fallback
 export function useMyFish() {
   const { publicKey } = useWallet();
   const chainNowSec = useBlockchainNowSec();
+  const { minFeedAtomic } = useGameRulesConfig();
   const [loading, setLoading] = useState<boolean>(false);
   const [items, setItems] = useState<FishEntity[]>([]);
   const [valueById, setValueById] = useState<Record<number, number>>({});
@@ -124,7 +125,7 @@ export function useMyFish() {
         valueMap[f.id] = Number(f.valueLamports || 0);
         const baseFeed = Math.max(
           Math.floor((Number(f.valueLamports || 0) * currentFeedPercentBps) / 10_000) - Number(f.receivedFromHuntValue || 0),
-          MIN_FEED_LAMPORTS
+          minFeedAtomic
         );
         const fee = Math.floor(baseFeed / 10);
         baseMap[f.id] = baseFeed;
@@ -163,7 +164,7 @@ export function useMyFish() {
     } finally {
       setLoading(false);
     }
-  }, [publicKey]);
+  }, [publicKey, minFeedAtomic]);
 
   useEffect(() => {
     let cancelled = false;
@@ -192,7 +193,7 @@ export function useMyFish() {
       const recvFromHunt = items.find((x) => x.id === fishId)?.receivedFromHuntValue || 0;
       const baseFeed = Math.max(
         Math.floor((currentVal * feedPercentBps) / 10_000) - recvFromHunt,
-        MIN_FEED_LAMPORTS
+        minFeedAtomic
       );
       return { ...prev, [fishId]: baseFeed };
     });
@@ -201,12 +202,12 @@ export function useMyFish() {
       const recvFromHunt = items.find((x) => x.id === fishId)?.receivedFromHuntValue || 0;
       const baseFeed = Math.max(
         Math.floor((currentVal * feedPercentBps) / 10_000) - recvFromHunt,
-        MIN_FEED_LAMPORTS
+        minFeedAtomic
       );
       const fee = Math.floor(baseFeed / 10);
       return { ...prev, [fishId]: baseFeed + fee };
     });
-  }, [chainNowSec, items, valueById, feedPercentBps]);
+  }, [chainNowSec, items, valueById, feedPercentBps, minFeedAtomic]);
 
   const refreshFishInfo = useCallback(
     async (fishId: number) => {
@@ -232,7 +233,7 @@ export function useMyFish() {
 
         const baseFeed = Math.max(
           Math.floor((valueLamportsNum * feedPercentBps) / 10_000) - receivedFromHunt,
-          MIN_FEED_LAMPORTS
+          minFeedAtomic
         );
         const fee = Math.floor(baseFeed / 10);
 

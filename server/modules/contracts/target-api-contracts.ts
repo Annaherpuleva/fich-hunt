@@ -95,3 +95,11 @@ export const adminRejectContract = z.object({
   success: z.literal(true),
   payment: paymentsContract.element,
 })
+
+export const gameConfigContract = z.object({
+  currencyCode: z.literal("TON"),
+  atomicUnitsPerCurrency: z.string().regex(/^\d+$/),
+  minDepositAtomic: z.string().regex(/^\d+$/),
+  minFeedAtomic: z.string().regex(/^\d+$/),
+  commissionBps: z.number().int().nonnegative(),
+})

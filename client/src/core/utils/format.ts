@@ -1,13 +1,19 @@
-import { LAMPORTS_PER_SOL } from '../constants';
+import { formatAtomicAmount, fromAtomicAmount, toAtomicAmount } from '../../../../shared/money';
 
 export function lamportsToSol(lamports: number | bigint, digits = 4): string {
-  const n = typeof lamports === 'bigint' ? Number(lamports) : lamports;
-  const sol = n / LAMPORTS_PER_SOL;
-  return sol.toFixed(digits);
+  return formatAtomicAmount(lamports, digits, false);
 }
 
 export function solToLamports(sol: number): number {
-  return Math.floor(sol * LAMPORTS_PER_SOL);
+  return Number(toAtomicAmount(sol));
+}
+
+export function formatGameAmount(amountAtomic: number | bigint, digits = 4): string {
+  return formatAtomicAmount(amountAtomic, digits, true);
+}
+
+export function atomicToFloat(amountAtomic: number | bigint): number {
+  return fromAtomicAmount(amountAtomic);
 }
 
 export function clampNumber(n: number, min: number, max: number): number {

@@ -1,4 +1,4 @@
-import { MIN_DEPOSIT_LAMPORTS } from '../../../core/constants';
+import { FALLBACK_MIN_DEPOSIT_ATOMIC } from '../../../core/constants';
 
 type MarkCostParams = {
   valueLamports?: number | null;
@@ -7,6 +7,7 @@ type MarkCostParams = {
   feedPeriodSec: number;
   markPlacementWindowSec: number;
   highRateThresholdSec: number;
+  minDepositAtomic?: number;
 };
 
 export const getMarkCostLamports = ({
@@ -16,6 +17,7 @@ export const getMarkCostLamports = ({
   feedPeriodSec,
   markPlacementWindowSec,
   highRateThresholdSec,
+  minDepositAtomic = FALLBACK_MIN_DEPOSIT_ATOMIC,
 }: MarkCostParams): number => {
   const value = Math.max(0, Math.floor(Number(valueLamports || 0)));
   const lastFed = Number(lastFedAtSec || 0);
@@ -28,5 +30,5 @@ export const getMarkCostLamports = ({
 
   const bps = timeUntilVictim <= highRateThresholdSec ? 1000 : 500;
   const raw = Math.floor((value * bps) / 10_000);
-  return Math.max(raw, MIN_DEPOSIT_LAMPORTS);
+  return Math.max(raw, minDepositAtomic);
 };
