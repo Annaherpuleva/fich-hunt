@@ -352,6 +352,23 @@ export const TxProvider: React.FC<{ children: React.ReactNode }>=({ children })=
   }, [retryCtx, runTx]);
 
   // В модалках всегда стараемся показывать тумбсы из /thumbs, а не полный аватар.
+
+
+  const txStatusChain = language === 'ru'
+    ? ['ожидает подтверждения', 'подтверждено в сети', 'зачислено backend']
+    : ['pending confirmation', 'confirmed on network', 'credited by backend'];
+
+  const TxStatusChain = () => (
+    <div className="mt-3 rounded-lg border border-white/10 bg-black/20 p-3">
+      <div className="text-[12px] uppercase tracking-wide text-white/60 mb-1">
+        {language === 'ru' ? 'Статус обработки' : 'Processing status'}
+      </div>
+      <div className="text-[13px] text-white/90">
+        {txStatusChain.join(' → ')}
+      </div>
+    </div>
+  );
+
   const getThumbAvatar = useCallback((url?: string | null): string | undefined => {
     if (!url) return undefined;
     if (url.includes('/static/avatars/thumbs/')) return url;
@@ -399,6 +416,7 @@ export const TxProvider: React.FC<{ children: React.ReactNode }>=({ children })=
                 </a>
               </div>
             )}
+            <TxStatusChain />
             <div className="mt-4 flex justify-end">
               <button className="btn-primary" onClick={() => setModal(null)}>
                 {t.tx.close}
@@ -427,6 +445,7 @@ export const TxProvider: React.FC<{ children: React.ReactNode }>=({ children })=
           fishValueText={modal.entity?.valueText}
         >
           <FishActionFeedChildren feedDelta={modal.entity?.feedDeltaSol} />
+          <TxStatusChain />
         </FishActionModal>
       )}
       {modal?.open && modal.ok && modal.successKind === 'revive' && (
@@ -453,6 +472,7 @@ export const TxProvider: React.FC<{ children: React.ReactNode }>=({ children })=
               ? 'Вы удачно возродили жителя с новым именем.'
               : 'You have successfully resurrected your creature with a new name.'}
           </div>
+          <TxStatusChain />
         </FishActionModal>
       )}
       {modal?.open && modal.ok && modal.successKind === 'mark' && (
@@ -468,6 +488,7 @@ export const TxProvider: React.FC<{ children: React.ReactNode }>=({ children })=
           fishValueText={modal.entity?.valueText}
         >
           <FishActionMarkChildren />
+          <TxStatusChain />
         </FishActionModal>
       )}
       {modal?.open && modal.ok && modal.successKind === 'hunt' && (
@@ -490,6 +511,7 @@ export const TxProvider: React.FC<{ children: React.ReactNode }>=({ children })=
           fishValueText={modal.entity?.valueText}
         >
           <FishActionBiteChildren gain={modal.entity?.huntGainSol} />
+          <TxStatusChain />
         </FishActionModal>
       )}
       {modal?.open && modal.ok && modal.successKind === 'gift' && (
@@ -518,6 +540,7 @@ export const TxProvider: React.FC<{ children: React.ReactNode }>=({ children })=
           fishValueText={modal.entity?.valueText}
         >
           <div className="text-[#DEDEDE] text-[14px] sm:text-[16px] leading-[1.4] tracking-[-0.03em] space-y-2">
+            <TxStatusChain />
             <p className="font-bold">
               {language === 'ru' ? 'Житель отправлен на адрес' : 'The creature has been sent to address'}
             </p>
@@ -563,6 +586,7 @@ export const TxProvider: React.FC<{ children: React.ReactNode }>=({ children })=
           fishValueText={modal.entity?.valueText}
         >
           <div className="text-[#DEDEDE] text-[14px] sm:text-[16px] leading-[1.4] tracking-[-0.03em] space-y-1">
+            <TxStatusChain />
             {(() => {
               const payout = modal.entity?.payoutSol;
               if (typeof payout === 'number' && Number.isFinite(payout) && payout > 0) {
