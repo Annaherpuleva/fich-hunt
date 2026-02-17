@@ -90,7 +90,7 @@ assert.equal(appState.workerAlerts.some((alert) => alert.type === "withdrawal_re
 
 const createEvent = appState.gameEvents.find((event) => event.eventType === "fish_created")
 assert.ok(createEvent)
-assert.match(createEvent!.comment, /create fich/i)
+assert.match(createEvent!.comment, /create fish/i)
 
 const depositEvent = appState.gameEvents.find((event) => event.eventType === "ton_deposit_confirmed")
 assert.ok(depositEvent)
