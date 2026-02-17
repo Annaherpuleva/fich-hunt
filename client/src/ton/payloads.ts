@@ -21,24 +21,20 @@ function toBase64(bytes: number[]) {
 }
 
 function encodeCell(body: number[]) {
-  // Minimal single-cell BoC wrapper for <= 127 bytes body with 0 refs.
-  // This is enough for small op payloads used by TonConnect messages.
+  // Single-root BoC with one ordinary cell and no refs.
   const d1 = 0x00;
-  // Descriptor 2 uses "full-bytes + ceil(bytes)" representation.
-  // For byte-aligned payloads this is `2 * bytes` (see TON cell spec).
-  // We only build byte-aligned bodies here.
   const d2 = body.length * 2;
   const cell = [d1, d2, ...body];
 
   const header = [
     0xb5, 0xee, 0x9c, 0x72,
-    0x01,
-    0x01,
-    0x01,
-    0x00,
-    0x01,
-    cell.length,
-    0x00,
+    0x01, // no index/no crc32, size_bytes=1
+    0x01, // offset_bytes=1
+    0x01, // cells_num=1
+    0x01, // roots_num=1
+    0x00, // absent_num=0
+    cell.length, // tot_cells_size
+    0x00, // root index #0
   ];
 
   return toBase64([...header, ...cell]);
