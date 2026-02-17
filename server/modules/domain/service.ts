@@ -2,6 +2,7 @@ import { FishService } from "../../domain/services/fishService"
 import { OceanService } from "../../domain/services/oceanService"
 import type { Fish } from "../../domain/types"
 import { appState } from "../state"
+import { gameEventsService } from "../events/service"
 
 export class DomainModuleService {
   private fishService = new FishService()
@@ -26,6 +27,12 @@ export class DomainModuleService {
     const id = appState.nextFishId()
     const persisted: Fish = { ...fish, id }
     appState.fish.set(id, persisted)
+    gameEventsService.record({
+      eventType: "fish_created",
+      fishId: persisted.id,
+      actorUserId: ownerUserId,
+      payload: { name, depositUnits: depositUnits.toString() },
+    })
     return persisted
   }
 
@@ -47,6 +54,12 @@ export class DomainModuleService {
     const fish = this.getFish(fishId)
     const { updatedFish } = this.fishService.feedFish(fish, appState.ocean, { fishId, actorUserId, amountUnits, expectedVersion }, new Date())
     this.saveFish(updatedFish)
+    gameEventsService.record({
+      eventType: "fish_fed",
+      fishId,
+      actorUserId,
+      payload: { amountUnits: amountUnits.toString() },
+    })
     return updatedFish
   }
 
@@ -56,6 +69,12 @@ export class DomainModuleService {
     const result = this.fishService.placeHuntingMark(hunter, prey, { hunterFishId, preyFishId, actorUserId, expectedHunterVersion, expectedPreyVersion }, new Date())
     this.saveFish(result.hunter)
     this.saveFish(result.prey)
+    gameEventsService.record({
+      eventType: "hunting_mark_placed",
+      fishId: hunterFishId,
+      actorUserId,
+      payload: { preyFishId },
+    })
     return result
   }
 
@@ -65,6 +84,12 @@ export class DomainModuleService {
     const result = this.fishService.huntFish(hunter, prey, { hunterFishId, preyFishId, actorUserId, expectedHunterVersion, expectedPreyVersion }, new Date())
     this.saveFish(result.hunter)
     this.saveFish(result.prey)
+    gameEventsService.record({
+      eventType: "fish_hunted",
+      fishId: hunterFishId,
+      actorUserId,
+      payload: { preyFishId, stolenShare: result.stolenShare.toString() },
+    })
     return result
   }
 
@@ -72,6 +97,12 @@ export class DomainModuleService {
     const fish = this.getFish(fishId)
     const result = this.fishService.resurrectFish(fish, appState.ocean, { fishId, actorUserId, expectedVersion, depositUnits }, new Date())
     this.saveFish(result.fish)
+    gameEventsService.record({
+      eventType: "fish_resurrected",
+      fishId,
+      actorUserId,
+      payload: { depositUnits: depositUnits.toString() },
+    })
     return result.fish
   }
 
@@ -79,6 +110,12 @@ export class DomainModuleService {
     const fish = this.getFish(fishId)
     const result = this.fishService.exitFish(fish, appState.ocean, { fishId, actorUserId, expectedVersion }, new Date())
     this.saveFish(result.fish)
+    gameEventsService.record({
+      eventType: "fish_exited",
+      fishId,
+      actorUserId,
+      payload: { payoutUnits: result.payoutUnits.toString(), feeUnits: result.feeUnits.toString() },
+    })
     return result
   }
 
@@ -86,6 +123,12 @@ export class DomainModuleService {
     const fish = this.getFish(fishId)
     const result = this.fishService.transferFish(fish, { fishId, actorUserId, expectedVersion, newOwnerUserId })
     this.saveFish(result)
+    gameEventsService.record({
+      eventType: "fish_transferred",
+      fishId,
+      actorUserId,
+      payload: { newOwnerUserId },
+    })
     return result
   }
 }

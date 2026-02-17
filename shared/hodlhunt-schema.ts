@@ -185,6 +185,7 @@ export const hhGameEvents = pgTable(
     fishId: integer("fish_id").references(() => hhFish.id, { onDelete: "set null", onUpdate: "cascade" }),
     actorUserId: integer("actor_user_id").references(() => hhUsers.id, { onDelete: "set null", onUpdate: "cascade" }),
     payloadJson: jsonb("payload_json"),
+    comment: text("comment").notNull().default(""),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => ({

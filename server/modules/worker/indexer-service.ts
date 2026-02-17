@@ -2,6 +2,7 @@ import { billingPaymentsService } from "../billing/payments-service"
 import { telegramIntegrationService } from "../integrations/telegram-service"
 import { tonIntegrationService } from "../integrations/ton-service"
 import { appState } from "../state"
+import { gameEventsService } from "../events/service"
 
 const MAX_WITHDRAW_RETRIES = 3
 const BACKOFF_BASE_MS = 1_000
@@ -37,6 +38,12 @@ export class IndexerWorkerService {
 
       try {
         const txHash = tonIntegrationService.sendWithdrawal(queueItem.paymentId, queueItem.idempotencyKey)
+        gameEventsService.record({
+          eventType: "ton_withdrawal_sent",
+          actorUserId: payment.userId,
+          txHash,
+          payload: { paymentId: payment.id, amount: payment.amount.toString() },
+        })
         telegramIntegrationService.notify(payment.userId, `Withdrawal ${payment.id} confirmed: ${txHash}`)
         billingPaymentsService.removeQueuedWithdrawal(queueItem.paymentId)
         processedWithdrawals += 1
@@ -47,6 +54,11 @@ export class IndexerWorkerService {
         if (nextAttempts >= MAX_WITHDRAW_RETRIES) {
           payment.status = "failed"
           payment.updatedAt = new Date()
+          gameEventsService.record({
+            eventType: "ton_withdrawal_failed",
+            actorUserId: payment.userId,
+            payload: { paymentId: payment.id, reason, attempts: nextAttempts },
+          })
           appState.workerAlerts.push({
             type: "withdrawal_failed",
             message: `Withdrawal ${payment.id} failed after ${nextAttempts} attempts: ${reason}`,
