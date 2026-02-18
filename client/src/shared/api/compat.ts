@@ -1,6 +1,7 @@
 const V1_PREFIX = '/api/v1';
 
 const ROUTE_MAP: Array<[RegExp, string]> = [
+  [/^\/v1\/fish\/create\b/, '/api/fish/create'],
   [/^\/api\/v1\/events\b/, '/api/events'],
   [/^\/api\/v1\/ocean\/summary\b/, '/api/ocean/state'],
   [/^\/api\/ocean\/summary\b/, '/api/ocean/state'],
@@ -9,6 +10,7 @@ const ROUTE_MAP: Array<[RegExp, string]> = [
 ];
 
 const MODERN_TO_LEGACY_MAP: Array<[RegExp, string]> = [
+  [/^\/api\/fish\/create\b/, '/v1/fish/create'],
   [/^\/api\/events\b/, '/api/v1/events'],
   [/^\/api\/ocean\/state\b/, '/api/v1/ocean/summary'],
   [/^\/api\/ocean\/summary\b/, '/api/v1/ocean/summary'],
@@ -73,7 +75,7 @@ function buildCandidatePaths(path: string, method: string): string[] {
   // Some production gateways expose write routes without the `/api` prefix
   // while still serving legacy `/api/v1/*` URLs in other environments.
   // Keep root-level variants for these endpoints as a last-resort fallback.
-  const includeNonApiVariant = method === 'GET' || method === 'HEAD';
+  const includeNonApiVariant = method === 'GET' || method === 'HEAD' || /\/fish\/create\b/.test(normalizedPath);
 
   const direct = normalizePath(normalizedPath);
   const legacy = normalizePath(mapLegacyApiPath(normalizedPath));
