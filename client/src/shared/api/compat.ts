@@ -21,6 +21,11 @@ function normalizePath(path: string): string {
   return path.startsWith('/') ? path : `/${path}`;
 }
 
+function normalizeBaseUrl(baseUrl: string): string {
+  const trimmed = String(baseUrl || '').replace(/\/$/, '');
+  return trimmed.replace(/\/api(?:\/v1)?$/, '');
+}
+
 function withOrWithoutApiPrefix(path: string, includeNonApiVariant: boolean): string[] {
   const normalized = normalizePath(path);
   if (normalized.startsWith('/api/')) {
@@ -68,7 +73,7 @@ function buildCandidatePaths(path: string, method: string): string[] {
   // Some production gateways expose write routes without the `/api` prefix
   // while still serving legacy `/api/v1/*` URLs in other environments.
   // Keep root-level variants for these endpoints as a last-resort fallback.
-  const includeNonApiVariant = method === 'GET' || method === 'HEAD' || normalizedPath.startsWith(V1_PREFIX);
+  const includeNonApiVariant = method === 'GET' || method === 'HEAD';
 
   const direct = normalizePath(normalizedPath);
   const legacy = normalizePath(mapLegacyApiPath(normalizedPath));
@@ -89,7 +94,7 @@ function buildCandidatePaths(path: string, method: string): string[] {
 }
 
 export async function fetchCompat(baseUrl: string, path: string, init?: RequestInit) {
-  const base = (baseUrl || '').replace(/\/$/, '');
+  const base = normalizeBaseUrl(baseUrl);
   const method = String(init?.method || 'GET').toUpperCase();
   const candidates = buildCandidatePaths(path, method);
 
