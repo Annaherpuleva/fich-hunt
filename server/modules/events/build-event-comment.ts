@@ -27,7 +27,7 @@ export function buildEventComment(input: EventCommentInput): string {
     case "fish_transferred":
       return `transfer: user #${input.actorUserId ?? "unknown"} transferred fish #${input.fishId ?? "unknown"}`
     case "ton_deposit_confirmed":
-      return `deposit confirmed: tx ${input.txHash ?? "unknown"}`
+      return `deposit confirmed for user #${input.actorUserId ?? "unknown"}: tx ${input.txHash ?? "unknown"}`
     case "ton_withdrawal_sent":
       return `withdrawal sent: tx ${input.txHash ?? "unknown"}`
     case "ton_withdrawal_failed":
